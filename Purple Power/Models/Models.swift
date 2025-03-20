@@ -17,10 +17,11 @@ struct Challenge: Identifiable, Codable {
     let name: String
     let description: String
     let goal: Int
-    let type: String // "steps", "push-ups", "run"
+    let type: String
     let reward: Reward
     var progress: Int = 0
     var isCompleted: Bool = false
+    let deadline: Date? // Для ограниченных по времени событий
 }
 
 struct Reward: Codable {
@@ -43,17 +44,22 @@ class UserData: ObservableObject {
     init() {
         progress = UserDefaults.standard.load(key: "UserProgress") ?? UserProgress()
         challenges = UserDefaults.standard.load(key: "Challenges") ?? [
-            Challenge(name: "Purple Marathon", description: "Run 10 km in a week", goal: 10000, type: "steps", reward: Reward(strength: 10, endurance: 5, speed: 5, badge: "marathon")),
-            Challenge(name: "Amethyst Strength", description: "Complete 100 push-ups", goal: 100, type: "push-ups", reward: Reward(strength: 15, endurance: 0, speed: 0, badge: "strength")),
-            Challenge(name: "Violet Sprint", description: "Run 5 km in one go", goal: 5000, type: "steps", reward: Reward(strength: 5, endurance: 5, speed: 10, badge: "sprint")),
-            Challenge(name: "Winter Purple Run", description: "Run 15 km in cold weather", goal: 15000, type: "steps", reward: Reward(strength: 10, endurance: 10, speed: 5, badge: "winter")),
-            Challenge(name: "Shadow Plank", description: "Hold a plank for 5 minutes", goal: 300, type: "seconds", reward: Reward(strength: 5, endurance: 15, speed: 0, badge: "plank"))
+            Challenge(name: "Purple Marathon", description: "Run 10 km in a week", goal: 10000, type: "steps", reward: Reward(strength: 10, endurance: 5, speed: 5, badge: "marathon"), deadline: nil),
+            Challenge(name: "Amethyst Strength", description: "Complete 100 push-ups", goal: 100, type: "strength", reward: Reward(strength: 15, endurance: 0, speed: 0, badge: "strength"), deadline: nil),
+            Challenge(name: "Shadow Plank", description: "Hold a plank for 5 minutes", goal: 300, type: "endurance", reward: Reward(strength: 5, endurance: 15, speed: 0, badge: "plank"), deadline: nil),
+            Challenge(name: "Purple Journey", description: "Stage 1: 5000 steps\nStage 2: 50 push-ups\nStage 3: 5 km run", goal: 3, type: "multi", reward: Reward(strength: 20, endurance: 10, speed: 10, badge: "journey"), deadline: nil),
+            Challenge(name: "Spring Sprint", description: "Run 7 km in 7 days", goal: 7000, type: "steps", reward: Reward(strength: 5, endurance: 5, speed: 10, badge: "sprint"), deadline: Date().addingTimeInterval(7 * 24 * 60 * 60))
         ]
         startPedometerUpdates()
     }
 
-    func saveProgress() { UserDefaults.standard.save(progress, key: "UserProgress") }
-    func saveChallenges() { UserDefaults.standard.save(challenges, key: "Challenges") }
+    func saveProgress() {
+        UserDefaults.standard.save(progress, key: "UserProgress")
+    }
+
+    func saveChallenges() {
+        UserDefaults.standard.save(challenges, key: "Challenges")
+    }
 
     func startPedometerUpdates() {
         if CMPedometer.isStepCountingAvailable() {
@@ -88,10 +94,15 @@ class UserData: ObservableObject {
 
 extension UserDefaults {
     func save<T: Codable>(_ object: T, key: String) {
-        if let encoded = try? JSONEncoder().encode(object) { set(encoded, forKey: key) }
+        if let encoded = try? JSONEncoder().encode(object) {
+            set(encoded, forKey: key)
+        }
     }
+
     func load<T: Codable>(key: String) -> T? {
-        if let data = data(forKey: key), let decoded = try? JSONDecoder().decode(T.self, from: data) { return decoded }
+        if let data = data(forKey: key), let decoded = try? JSONDecoder().decode(T.self, from: data) {
+            return decoded
+        }
         return nil
     }
 }

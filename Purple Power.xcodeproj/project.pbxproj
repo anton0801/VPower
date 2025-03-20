@@ -269,6 +269,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Purple Power/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Purple-Power-Info.plist";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need access to your motion data to track your steps.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -308,6 +309,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Purple Power/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Purple-Power-Info.plist";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need access to your motion data to track your steps.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
